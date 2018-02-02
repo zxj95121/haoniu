@@ -11,10 +11,24 @@ class Base extends Controller
 	public function __construct(Request $request)
 	{
 		$input = $request->param();
-		if (isset($input['interval'])) {
-			$interval = explode('.', $input['interval']);
-			Basic::run($interval[0], $interval[1]);
-		}
+
+		$this->extend($input);//调用扩展内容这块
+
 		$this->data = 1;
+	}
+
+	private function extend($post)
+	{
+		/*定时器这块的类，url请求参数interval*/
+		if (isset($post['i'])) {
+			Basic::run($post['i']);
+		}
+		
+		/*钩子这块的类，主要是用于加载其他页面内容或者调到其他页面*/
+		if (isset($post['h'])) {
+			$address = HOOK.str_replace('.', '/', $post['h']).'.php';
+			include ($address);
+			exit;
+		}
 	}
 }
